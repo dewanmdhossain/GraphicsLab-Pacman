@@ -121,3 +121,45 @@ void initGhosts() {
         ghosts[i].stateTimer = 0;
     }
 }
+
+void resetGame() {
+    initMaze();
+    initPacman();
+    initGhosts();
+    dotsEaten = 0;
+    gameTime = 0;
+    startTime = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
+}
+
+bool isWall(int x, int y) {
+    if (x < 0 || x >= MAZE_WIDTH || y < 0 || y >= MAZE_HEIGHT)
+        return true;
+    return maze[y][x] == 1;
+}
+
+bool canMove(float x, float y, int dir) {
+    float nextX = x, nextY = y;
+    float offset = 0.4f;
+    
+    switch(dir) {
+        case 0: nextX += offset; break; // right
+        case 1: nextY -= offset; break; // up
+        case 2: nextX -= offset; break; // left
+        case 3: nextY += offset; break; // down
+    }
+    
+    int gridX = (int)(nextX + 0.5f);
+    int gridY = (int)(nextY + 0.5f);
+    
+    return !isWall(gridX, gridY);
+}
+
+void drawCircle(float cx, float cy, float r, int segments) {
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex2f(cx, cy);
+    for (int i = 0; i <= segments; i++) {
+        float angle = 2.0f * M_PI * i / segments;
+        glVertex2f(cx + cos(angle) * r, cy + sin(angle) * r);
+    }
+    glEnd();
+}

@@ -93,3 +93,31 @@ void initMaze() {
         }
     }
 }
+
+void initPacman() {
+    pacman.x = 14;
+    pacman.y = 23;
+    pacman.speed = 0.1f;
+    pacman.direction = 0;
+    pacman.nextDirection = 0;
+    pacman.mouthAngle = 0;
+    pacman.mouthOpening = 1;
+    pacman.lives = 3;
+    pacman.score = 0;
+}
+
+void initGhosts() {
+    // Red ghost (Blinky)
+    ghosts[0].x = 13; ghosts[0].y = 11; ghosts[0].color = 0; ghosts[0].speed = 0.08f;
+    // Pink ghost (Pinky)
+    ghosts[1].x = 14; ghosts[1].y = 14; ghosts[1].color = 1; ghosts[1].speed = 0.08f;
+    // Cyan ghost (Inky)
+    ghosts[2].x = 13; ghosts[2].y = 14; ghosts[2].color = 2; ghosts[2].speed = 0.08f;
+    // Orange ghost (Clyde)
+    ghosts[3].x = 15; ghosts[3].y = 14; ghosts[3].color = 3; ghosts[3].speed = 0.08f;
+    
+    for (int i = 0; i < 4; i++) {
+        ghosts[i].direction = rand() % 4;
+        ghosts[i].stateTimer = 0;
+    }
+}

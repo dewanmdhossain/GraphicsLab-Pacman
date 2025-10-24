@@ -12,28 +12,28 @@
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
-#define MAZE_WIDTH 28
+#define MAZE_WIDTH 28 //wall
 #define MAZE_HEIGHT 31
-#define CELL_SIZE 18
+#define CELL_SIZE 18 //cell
 
 // Game states
-enum GameState { MENU, PLAYING, PAUSED, GAME_OVER, WIN };
+enum GameState { MENU, PLAYING, PAUSED, GAME_OVER, WIN }; 
 GameState currentState = MENU;
 
 // Pacman structure
-struct Pacman {
+struct Pacman { 
     float x, y;
-    float speed;
+    float speed; 
     int direction; // 0=right, 1=up, 2=left, 3=down
     int nextDirection;
-    float mouthAngle;
-    int mouthOpening;
-    int lives;
-    int score;
+    float mouthAngle; 
+    int mouthOpening; 
+    int lives; 
+    int score; 
 } pacman;
 
 // Ghost structure
-struct Ghost {
+struct Ghost { 
     float x, y;
     float speed;
     int direction;
@@ -43,15 +43,15 @@ struct Ghost {
 
 // Game variables
 int maze[MAZE_HEIGHT][MAZE_WIDTH];
-int totalDots = 0;
-int dotsEaten = 0;
-float gameTime = 0;
-float startTime = 0;
-int highScore = 0;
+int totalDots = 0; 
+int dotsEaten = 0; 
+float gameTime = 0; 
+float startTime = 0; 
+int highScore = 0; 
 
 // Simple maze layout (1=wall, 0=path with dot, 2=empty path, 3=ghost house)
-void initMaze() {
-    int mazeLayout[MAZE_HEIGHT][MAZE_WIDTH] = {
+void initMaze() { 
+    int mazeLayout[MAZE_HEIGHT][MAZE_WIDTH] = { 
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1},
@@ -83,7 +83,7 @@ void initMaze() {
         {1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
-    };
+    }; 
     
     totalDots = 0;
     for (int i = 0; i < MAZE_HEIGHT; i++) {
@@ -92,7 +92,7 @@ void initMaze() {
             if (maze[i][j] == 0) totalDots++;
         }
     }
-}
+} 
 
 void initPacman() {
     pacman.x = 14;
@@ -100,14 +100,14 @@ void initPacman() {
     pacman.speed = 0.1f;
     pacman.direction = 0;
     pacman.nextDirection = 0;
-    pacman.mouthAngle = 0;
+    pacman.mouthAngle = 0; //radius angel
     pacman.mouthOpening = 1;
     pacman.lives = 3;
     pacman.score = 0;
-}
+} 
 
 void initGhosts() {
-    // Red ghost (Blinky)
+    // Red ghost (Blinky) 
     ghosts[0].x = 13; ghosts[0].y = 11; ghosts[0].color = 0; ghosts[0].speed = 0.08f;
     // Pink ghost (Pinky)
     ghosts[1].x = 14; ghosts[1].y = 14; ghosts[1].color = 1; ghosts[1].speed = 0.08f;
@@ -120,7 +120,7 @@ void initGhosts() {
         ghosts[i].direction = rand() % 4;
         ghosts[i].stateTimer = 0;
     }
-}
+} 
 
 void resetGame() {
     initMaze();
@@ -130,17 +130,17 @@ void resetGame() {
     gameTime = 0;
     startTime = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
 }
-
+//flag
 bool isWall(int x, int y) {
     if (x < 0 || x >= MAZE_WIDTH || y < 0 || y >= MAZE_HEIGHT)
         return true;
     return maze[y][x] == 1;
 }
-
+//pacman movement calculate
 bool canMove(float x, float y, int dir) {
     float nextX = x, nextY = y;
     float offset = 0.4f;
-    
+    //next move calculation
     switch(dir) {
         case 0: nextX += offset; break; // right
         case 1: nextY -= offset; break; // up
@@ -158,25 +158,25 @@ void drawCircle(float cx, float cy, float r, int segments) {
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(cx, cy);
     for (int i = 0; i <= segments; i++) {
-        float angle = 2.0f * M_PI * i / segments;
+        float angle = 2.0f * M_PI * i / segments;  //draw circle 
         glVertex2f(cx + cos(angle) * r, cy + sin(angle) * r);
     }
     glEnd();
 }
-
+//screen show pacman
 void drawPacman() {
     glPushMatrix();
     glTranslatef(pacman.x * CELL_SIZE + CELL_SIZE/2, 
                  pacman.y * CELL_SIZE + CELL_SIZE/2, 0);
     glRotatef(-pacman.direction * 90, 0, 0, 1);
     
-    glColor3f(1.0f, 1.0f, 0.0f);
+    glColor3f(1.0f, 1.0f, 0.0f);  //color change pacman
     
-    float startAngle = pacman.mouthAngle * M_PI / 180.0f;
-    float endAngle = (360 - pacman.mouthAngle) * M_PI / 180.0f;
+    float startAngle = pacman.mouthAngle * M_PI / 180.0f; //mouth angel
+    float endAngle = (360 - pacman.mouthAngle) * M_PI / 180.0f;  
     
-    glBegin(GL_TRIANGLE_FAN);
-    glVertex2f(0, 0);
+    glBegin(GL_TRIANGLE_FAN); 
+    glVertex2f(0, 0); 
     for (float angle = startAngle; angle <= endAngle; angle += 0.1f) {
         glVertex2f(cos(angle) * 8, sin(angle) * 8);
     }
@@ -222,7 +222,7 @@ void drawGhost(Ghost &ghost) {
     glColor3f(1.0f, 1.0f, 1.0f);
     drawCircle(x - 3, y - 2, 2, 16);
     drawCircle(x + 3, y - 2, 2, 16);
-    
+    //choker moni
     glColor3f(0.0f, 0.0f, 1.0f);
     drawCircle(x - 3, y - 2, 1, 16);
     drawCircle(x + 3, y - 2, 1, 16);
@@ -334,7 +334,7 @@ void drawWinScreen() {
     drawText(250, 180, "Press SPACE to Play Again");
     drawText(260, 140, "Press ESC for Menu");
 }
-
+//main logic
 void updatePacman() {
     // Try to change direction
     if (canMove(pacman.x, pacman.y, pacman.nextDirection)) {
@@ -367,7 +367,7 @@ void updatePacman() {
     if (maze[gridY][gridX] == 0) {
         maze[gridY][gridX] = 2;
         dotsEaten++;
-        pacman.score += 10;
+        pacman.score += 10;  //score
     }
     
     // Check win condition
@@ -385,7 +385,7 @@ void updateGhosts() {
         
         // Simple AI: try to move towards Pacman with some randomness
         if (rand() % 100 < 70) { // 70% chase, 30% random
-            float dx = pacman.x - ghost.x;
+            float dx = pacman.x - ghost.x; //pacman distance calculate
             float dy = pacman.y - ghost.y;
             
             if (fabs(dx) > fabs(dy)) {
@@ -411,7 +411,7 @@ void updateGhosts() {
         
         // Check collision with Pacman
         float dist = sqrt(pow(ghost.x - pacman.x, 2) + pow(ghost.y - pacman.y, 2));
-        if (dist < 0.5f) {
+        if (dist < 0.5f) {  //pacman life distance
             pacman.lives--;
             if (pacman.lives <= 0) {
                 currentState = GAME_OVER;

@@ -86,7 +86,7 @@ void initMaze() {
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
-   
+
     totalDots = 0;
     for (int i = 0; i < MAZE_HEIGHT; i++) {
         for (int j = 0; j < MAZE_WIDTH; j++) {
@@ -119,7 +119,7 @@ void initGhosts() {
     ghosts[2].x = 13; ghosts[2].y = 14; ghosts[2].color = 2; ghosts[2].speed = 0.08f;
     // Orange ghost (Clyde)
     ghosts[3].x = 15; ghosts[3].y = 14; ghosts[3].color = 3; ghosts[3].speed = 0.08f;
-   
+
     for (int i = 0; i < 4; i++) {
         ghosts[i].direction = rand() % 4;
         ghosts[i].stateTimer = 0;
@@ -142,7 +142,7 @@ void resetPositions() {
     pacman.nextDirection = 0;
     pacman.invulnerable = true;
     pacman.invulnerableTimer = 3.0f; // 3 seconds of invulnerability
-   
+
     // Reset ghost positions
     ghosts[0].x = 13; ghosts[0].y = 11;
     ghosts[1].x = 14; ghosts[1].y = 14;
@@ -159,17 +159,17 @@ bool isWall(int x, int y) {
 bool canMove(float x, float y, int dir) {
     float nextX = x, nextY = y;
     float offset = 0.4f;
-   
+
     switch(dir) {
         case 0: nextX += offset; break; // right
         case 1: nextY -= offset; break; // up
         case 2: nextX -= offset; break; // left
         case 3: nextY += offset; break; // down
     }
-   
+
     int gridX = (int)(nextX + 0.5f);
     int gridY = (int)(nextY + 0.5f);
-   
+
     return !isWall(gridX, gridY);
 }
 
@@ -188,31 +188,31 @@ void drawPacman() {
     glTranslatef(pacman.x * CELL_SIZE + CELL_SIZE/2,
                  pacman.y * CELL_SIZE + CELL_SIZE/2, 0);
     glRotatef(-pacman.direction * 90, 0, 0, 1);
-   
+
     // Flash when invulnerable
     if (pacman.invulnerable && ((int)(pacman.invulnerableTimer * 10) % 2 == 0)) {
         glColor3f(1.0f, 0.5f, 0.5f); // Red tint when invulnerable
     } else {
         glColor3f(1.0f, 1.0f, 0.0f);
     }
-   
+
     float startAngle = pacman.mouthAngle * M_PI / 180.0f;
     float endAngle = (360 - pacman.mouthAngle) * M_PI / 180.0f;
-   
+
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(0, 0);
     for (float angle = startAngle; angle <= endAngle; angle += 0.1f) {
         glVertex2f(cos(angle) * 8, sin(angle) * 8);
     }
     glEnd();
-   
+
     glPopMatrix();
 }
 
 void drawGhost(Ghost &ghost) {
     float x = ghost.x * CELL_SIZE + CELL_SIZE/2;
     float y = ghost.y * CELL_SIZE + CELL_SIZE/2;
-   
+
     // Set ghost color
     switch(ghost.color) {
         case 0: glColor3f(1.0f, 0.0f, 0.0f); break; // Red
@@ -220,7 +220,7 @@ void drawGhost(Ghost &ghost) {
         case 2: glColor3f(0.0f, 1.0f, 1.0f); break; // Cyan
         case 3: glColor3f(1.0f, 0.65f, 0.0f); break; // Orange
     }
-   
+
     // Body (semi-circle + rectangle)
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(x, y);
@@ -229,7 +229,7 @@ void drawGhost(Ghost &ghost) {
         glVertex2f(x + cos(angle) * 8, y + sin(angle) * 8);
     }
     glEnd();
-   
+
     // Bottom wavy part
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(x, y);
@@ -241,12 +241,12 @@ void drawGhost(Ghost &ghost) {
     glVertex2f(x + 6, y + 4);
     glVertex2f(x + 8, y);
     glEnd();
-   
+
     // Eyes
     glColor3f(1.0f, 1.0f, 1.0f);
     drawCircle(x - 3, y - 2, 2, 16);
     drawCircle(x + 3, y - 2, 2, 16);
-   
+
     glColor3f(0.0f, 0.0f, 1.0f);
     drawCircle(x - 3, y - 2, 1, 16);
     drawCircle(x + 3, y - 2, 1, 16);
@@ -257,10 +257,10 @@ void drawMaze() {
         for (int j = 0; j < MAZE_WIDTH; j++) {
             float x = j * CELL_SIZE;
             float y = i * CELL_SIZE;
-           
+
             if (maze[i][j] == 1) {
                 // Wall
-                glColor3f(0.0f, 0.0f, 1.0f);
+                glColor3f(1.0f, 1.0f, 1.0f);
                 glBegin(GL_QUADS);
                 glVertex2f(x, y);
                 glVertex2f(x + CELL_SIZE, y);
@@ -269,7 +269,7 @@ void drawMaze() {
                 glEnd();
             } else if (maze[i][j] == 0) {
                 // Dot
-                glColor3f(1.0f, 1.0f, 1.0f);
+                glColor3f(1.0f, 0.0f, 0.0f);
                 drawCircle(x + CELL_SIZE/2, y + CELL_SIZE/2, 2, 8);
             }
         }
@@ -286,13 +286,13 @@ void drawText(float x, float y, const char* text) {
 void drawHUD() {
     glColor3f(1.0f, 1.0f, 1.0f);
     char buffer[100];
-   
+
     sprintf(buffer, "Score: %d", pacman.score);
     drawText(520, 550, buffer);
-   
+
     sprintf(buffer, "Lives: %d", pacman.lives);
     drawText(520, 520, buffer);
-   
+
     // Draw life icons
     for (int i = 0; i < pacman.lives; i++) {
         glColor3f(1.0f, 1.0f, 0.0f);
@@ -300,13 +300,13 @@ void drawHUD() {
         float y = 500;
         drawCircle(x, y, 8, 20);
     }
-   
+
     sprintf(buffer, "Time: %.1f", gameTime);
     drawText(520, 460, buffer);
-   
+
     sprintf(buffer, "Dots: %d/%d", dotsEaten, totalDots);
     drawText(520, 430, buffer);
-   
+
     if (pacman.invulnerable) {
         glColor3f(1.0f, 0.0f, 0.0f);
         sprintf(buffer, "Invulnerable: %.1f", pacman.invulnerableTimer);
@@ -317,7 +317,7 @@ void drawHUD() {
 void drawMenu() {
     glColor3f(1.0f, 1.0f, 0.0f);
     drawText(300, 400, "PAC-MAN");
-   
+
     glColor3f(1.0f, 1.0f, 1.0f);
     drawText(280, 320, "Press SPACE to Start");
     drawText(280, 280, "Press H for High Score");
@@ -329,7 +329,7 @@ void drawMenu() {
 void drawPauseScreen() {
     glColor3f(1.0f, 1.0f, 0.0f);
     drawText(320, 300, "PAUSED");
-   
+
     glColor3f(1.0f, 1.0f, 1.0f);
     drawText(260, 250, "Press P to Resume");
     drawText(260, 210, "Press ESC to Menu");
@@ -338,15 +338,15 @@ void drawPauseScreen() {
 void drawGameOver() {
     glColor3f(1.0f, 0.0f, 0.0f);
     drawText(300, 350, "GAME OVER");
-   
+
     glColor3f(1.0f, 1.0f, 1.0f);
     char buffer[100];
     sprintf(buffer, "Final Score: %d", pacman.score);
     drawText(280, 300, buffer);
-   
+
     sprintf(buffer, "Time: %.1f seconds", gameTime);
     drawText(280, 260, buffer);
-   
+
     drawText(250, 200, "Press SPACE to Play Again");
     drawText(260, 160, "Press ESC for Menu");
 }
@@ -354,20 +354,20 @@ void drawGameOver() {
 void drawWinScreen() {
     glColor3f(0.0f, 1.0f, 0.0f);
     drawText(300, 350, "YOU WIN!");
-   
+
     glColor3f(1.0f, 1.0f, 1.0f);
     char buffer[100];
     sprintf(buffer, "Final Score: %d", pacman.score);
     drawText(280, 300, buffer);
-   
+
     sprintf(buffer, "Time: %.1f seconds", gameTime);
     drawText(280, 260, buffer);
-   
+
     if (pacman.score > highScore) {
         glColor3f(1.0f, 1.0f, 0.0f);
         drawText(270, 220, "NEW HIGH SCORE!");
     }
-   
+
     glColor3f(1.0f, 1.0f, 1.0f);
     drawText(250, 180, "Press SPACE to Play Again");
     drawText(260, 140, "Press ESC for Menu");
@@ -381,12 +381,12 @@ void updatePacman() {
             pacman.invulnerable = false;
         }
     }
-   
+
     // Try to change direction
     if (canMove(pacman.x, pacman.y, pacman.nextDirection)) {
         pacman.direction = pacman.nextDirection;
     }
-   
+
     // Move in current direction
     if (canMove(pacman.x, pacman.y, pacman.direction)) {
         switch(pacman.direction) {
@@ -396,26 +396,26 @@ void updatePacman() {
             case 3: pacman.y += pacman.speed; break;
         }
     }
-   
+
     // Wrap around
     if (pacman.x < 0) pacman.x = MAZE_WIDTH - 1;
     if (pacman.x >= MAZE_WIDTH) pacman.x = 0;
-   
+
     // Animate mouth
     pacman.mouthAngle += pacman.mouthOpening * 3;
     if (pacman.mouthAngle >= 45) pacman.mouthOpening = -1;
     if (pacman.mouthAngle <= 0) pacman.mouthOpening = 1;
-   
+
     // Eat dots
     int gridX = (int)(pacman.x + 0.5f);
     int gridY = (int)(pacman.y + 0.5f);
-   
+
     if (maze[gridY][gridX] == 0) {
         maze[gridY][gridX] = 2;
         dotsEaten++;
         pacman.score += 10;
     }
-   
+
     // Check win condition
     if (dotsEaten >= totalDots) {
         currentState = WIN;
@@ -428,12 +428,12 @@ void updatePacman() {
 void updateGhosts() {
     for (int i = 0; i < 4; i++) {
         Ghost &ghost = ghosts[i];
-       
+
         // Simple AI: try to move towards Pacman with some randomness
         if (rand() % 100 < 70) { // 70% chase, 30% random
             float dx = pacman.x - ghost.x;
             float dy = pacman.y - ghost.y;
-           
+
             if (fabs(dx) > fabs(dy)) {
                 ghost.direction = (dx > 0) ? 0 : 2;
             } else {
@@ -442,7 +442,7 @@ void updateGhosts() {
         } else {
             ghost.direction = rand() % 4;
         }
-       
+
         // Try to move
         if (canMove(ghost.x, ghost.y, ghost.direction)) {
             switch(ghost.direction) {
@@ -454,14 +454,14 @@ void updateGhosts() {
         } else {
             ghost.direction = rand() % 4;
         }
-       
+
         // Check collision with Pacman (only if not invulnerable)
         if (!pacman.invulnerable) {
             float dist = sqrt(pow(ghost.x - pacman.x, 2) + pow(ghost.y - pacman.y, 2));
             if (dist < 0.7f) { // Increased collision threshold
                 pacman.lives--;
                 printf("Hit! Lives remaining: %d\n", pacman.lives); // Debug output
-               
+
                 if (pacman.lives <= 0) {
                     currentState = GAME_OVER;
                     printf("Game Over!\n"); // Debug output
@@ -472,7 +472,7 @@ void updateGhosts() {
                 break; // Exit loop to prevent multiple hits in one frame
             }
         }
-       
+
         // Increase speed over time
         ghost.speed = 0.08f + gameTime * 0.001f;
         if (ghost.speed > 0.15f) ghost.speed = 0.15f;
@@ -481,7 +481,7 @@ void updateGhosts() {
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
-   
+
     if (currentState == MENU) {
         drawMenu();
     } else if (currentState == PAUSED) {
@@ -500,7 +500,7 @@ void display() {
     } else if (currentState == WIN) {
         drawWinScreen();
     }
-   
+
     glutSwapBuffers();
 }
 
@@ -510,7 +510,7 @@ void update(int value) {
         updatePacman();
         updateGhosts();
     }
-   
+
     glutPostRedisplay();
     glutTimerFunc(16, update, 0); // ~60 FPS
 }
@@ -570,7 +570,7 @@ void init() {
     glLoadIdentity();
     gluOrtho2D(0, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
     glMatrixMode(GL_MODELVIEW);
-   
+
     srand(time(NULL));
     resetGame();
 }
@@ -581,14 +581,14 @@ int main(int argc, char** argv) {
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     glutInitWindowPosition(100, 100);
     glutCreateWindow("PAC-MAN - CSE 426 Project");
-   
+
     init();
-   
+
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(specialKeys);
     glutTimerFunc(0, update, 0);
-   
+
     glutMainLoop();
     return 0;
 }

@@ -334,7 +334,7 @@ void drawWinScreen() {
     drawText(250, 180, "Press SPACE to Play Again");
     drawText(260, 140, "Press ESC for Menu");
 }
-//main logic
+//Main Logic of Code
 void updatePacman() {
     // Try to change direction
     if (canMove(pacman.x, pacman.y, pacman.nextDirection)) {
